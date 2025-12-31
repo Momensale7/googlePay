@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Pixels</title>
+        <base href="/">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+        <div style="position: absolute; width: 80%; margin-top: 10%;" id="example"></div>
+        <button id="payFromOutsideButton">Pay From Outside Button</button>
+        
+        <script src="https://cdn.jsdelivr.net/npm/paymob-pixel@latest/main.js" type="module"></script>
+        <script>
+            const button = document.getElementById('payFromOutsideButton');
+            button.addEventListener('click', function () {
+                // Calling pay request
+                window.dispatchEvent(new Event('payFromOutside'));
+            });
+            onload = (event) => {
+                new Pixel({
+                    publicKey: 'are_pk_live_GqHiaCC50EPBCVEE0KezRz0iwv2YJq2G',
+                    clientSecret: 'are_csk_live_7e0cbe088eedabf1aacee3c0351be195',
+                    paymentMethods: ['card', 'google-pay', 'apple-pay'],
+                    elementId: 'example',
+                    showSaveCard: true,
+                    forceSaveCard: true,
+                    disablePay: true,
+                    cardValidationChanged: (isValid) => {
+                        console.log("Is valid ? ", isValid)
+                    },
+                    beforePaymentComplete: async (paymentMethod) => {
+                        console.log('Before payment start');
+                        console.log('We are waiting for 5 seconds');
+                        await new Promise(res => setTimeout(() => res(''),5000))
+                        console.log('Before payment end');
+                        return true
+                    },
+                    afterPaymentComplete: async (res) => {
+                        console.log('After payment');
+                        console.log(res)
+                    },
+                    onPaymentCancel: async () => {
+                        console.log("====> onPaymentCancel")
+                    },
+                    customStyle: {
+                      HideCardIcons: true,
+                      HideCardLabel: true,
+                      Direction: 'rtl',
+                      Label_Text: {
+                        cardLabel: "بيانات البطاقة",
+                        savedCardsLabel: 'البطاقات المحفوطة',
+                        saveCardConsentLabel: 'حفظ البطاقة',
+                        cardEndingLabel: 'تنتهي بـ'
+                      },
+                      Placeholder_Text: {
+                        holderName: 'الاسم علي البطاقة',
+                        cardNumber:'رقم البطاقة',
+                        expiryDate:'سنة / شهر',
+                        securityCode:'(CVV) الرمز الامني'
+                      },
+                      Error_Text: {
+                        cardNumber: {
+                          required: 'مطلوب رقم البطاقة',
+                          invalid: 'رقم البطاقة غير صحيح'
+                        },
+                        expiryDate: {
+                          required: 'مطلوب تاريخ انتهاء الصلاحية',
+                          invalid: 'تاريخ انتهاء الصلاحية غير صحيح'
+                        },
+                        securityCode: 'مطلوب الرمز الامني (CVV)',
+                        holderName: 'مطلوب اسم حامل البطاقة',
+                      },
+                      Button_Text: {
+                        viewSavedCardsBtn: 'عرض البطاقات المحفوظة',
+                        addNewCardBtn: 'إضافة بطاقة جديدة',
+                        payBtn: 'ادفع'
+                      },
+                      Hint_Text: {
+                        saveCardConsentHint: 'سيتم حفظ تفاصيل البطاقة لاستخدامها في المستقبل.',
+                        cvvModalTitle: 'رمز CVV',
+                        cvvVisaMastercardQuestion: 'هل لديك بطاقة ماستركارد أو فيزا؟',
+                        cvvVisaMastercardHint:
+                          'هو رمز مكون من 3 أرقام موجود على ظهر البطاقة.',
+                        cvvAmexQuestion: 'هل لديك بطاقة أمريكان إكسبريس؟',
+                        cvvAmexHint:
+                          'هو رمز مكون من 4 أرقام موجود في الجهة الأمامية فوق رقم البطاقة.',
+                      },
+                      Font_Family: 'monospace',
+                      Font_Size_Label: '18',
+                      Font_Size_Input_Fields: '18',
+                      Font_Size_Payment_Button: '28',
+                      Font_Weight_Label: 400,
+                      Font_Weight_Input_Fields: 400,
+                      Font_Weight_Payment_Button: 900,
+                      Color_Container: '#b7ffe4',
+                      Color_Border_Input_Fields: '#f00',
+                      Color_Border_Payment_Button: '#f00',
+                      Radius_Border: '50',
+                      Color_Disabled: '#c153bf',
+                      Color_Error: '#4a6',
+                      Color_Primary: '#c153bf',
+                      Color_Input_Fields: 'yellow',
+                      Text_Color_For_Label: '#f00',
+                      Text_Color_For_Payment_Button: '#f00',
+                      Text_Color_For_Input_Fields: '#f00',
+                      Color_For_Text_Placeholder: '#c153bf',
+                      Width_of_Container: '100%',
+                      Vertical_Padding: '50',
+                      Vertical_Spacing_between_components: '8',
+                      Container_Padding: '50'
+                    }
+                });
+            };
+        </script>
+        <script src="https://pay.google.com/gp/p/js/pay.js"></script>
+  </body>
+</html>
